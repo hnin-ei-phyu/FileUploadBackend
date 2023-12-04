@@ -1,0 +1,27 @@
+function (req, res) {
+    cosnt fle = req.files.[filename]
+    const storage = new Storage(application.env.storageLocation)
+    result = await storage.upload(file, "datas")
+    
+}
+
+async readFile (req: any, res: any ) {
+        fetch('url/to/your/csv/http://localhost:3000/static/folder/1701497981556.pdf')
+        .then(function(response) {
+        return response.text()
+        })
+        .then(function(csv) {
+        // convert your csv to an array
+        });
+    }
+    
+//for read file
+      fs.readFile('../static/folder/1701495017989.pdf', (err,data) => {
+                if(err) {
+                    console.log(err);          
+                }
+                console.log(data);
+                
+               })
+
+               
