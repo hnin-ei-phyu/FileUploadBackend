@@ -16,12 +16,12 @@ async readFile (req: any, res: any ) {
     }
     
 //for read file
-      fs.readFile('../static/folder/1701495017989.pdf', (err,data) => {
-                if(err) {
-                    console.log(err);          
-                }
-                console.log(data);
-                
-               })
+            fetch(path)
+            .then(res => res.json())
+            .then(data => {
+            // convert your csv to an array
+            console.log(data)
+            });
+            
 
                
