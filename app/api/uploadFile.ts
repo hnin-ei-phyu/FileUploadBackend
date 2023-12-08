@@ -10,6 +10,7 @@ class UF {
     async uploadfile() {
         let headers: any = {}
         try {
+            console.log("Here")
             let result = await axios.post(`${this.root}/upload`,{headers})
             return result
         } catch (error) {

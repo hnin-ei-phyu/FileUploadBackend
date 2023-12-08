@@ -42,6 +42,7 @@ class FileUpload {
 
                 //Count ATB_Status times And Duration
                 let count = 0;
+                let totalTime = 0; // in minutes
                 const sequenceInfo: any[] = [];
 
                 for (let i = 0; i < myArr.length; i++) {
@@ -62,19 +63,22 @@ class FileUpload {
                     
                         const durationInMilliseconds = currentSequenceEndTime - currentSequenceStartTime;
                         const durationInMinutes = durationInMilliseconds / (1000 * 60);
+
+                        totalTime += durationInMinutes;
+
                     
                         const sequenceInfoItem = {
                             sequence: count,
                             startTime: currentSequenceStartTime,
                             endTime: currentSequenceEndTime,
-                            duration: durationInMinutes,
+                            duration: durationInMinutes.toFixed(2),
                           };
             
                           sequenceInfo.push(sequenceInfoItem);
                         }
                       }
             
-                      res.status(200).json({ TotalATB_Status: count, sequenceInfo });
+                      res.status(200).json({ TotalATB_Status: count,TotalTime: totalTime.toFixed(2) ,sequenceInfo });
 
             });
              
