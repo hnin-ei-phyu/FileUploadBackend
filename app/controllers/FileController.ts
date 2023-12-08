@@ -22,42 +22,62 @@ class FileUpload {
             .then(res => res.text())
             .then(data => {
 
-            const json = csv2json(data, {parseNumbers: true});
-            // console.log(json);
-            // console.log(json[0].ATB_Status);
+                const json = csv2json(data, {parseNumbers: true});
+                // console.log(json);
+                // console.log(json[0].ATB_Status);
 
-            const atbStatusValues = [];
+                const atbStatusValues: any = [];
+                const TimeStamp: any = [];
 
-            for (const dataPoint of json) {
-                const atb = dataPoint.ATB_Status;
-                // console.log(`ATB_Status: ${atb}`);
-                atbStatusValues.push(atb);  
-            }
-            // console.log('ATB_Status values:', atbStatusValues);
-
-            //Count ATB_Status times
-            let count = 0;
-
-            for (let i = 0; i < atbStatusValues.length; i++) {
-                // Check if the current value is 1
-                if (atbStatusValues[i] === 1) {
-                    // If it's the first occurrence or the previous value was 0, increment the count
-                    if (i === 0 || atbStatusValues[i - 1] === 0) {
-                    count++;
-                    console.log(`data: ${atbStatusValues[i]} (Start of sequence)`);
-                    }
-                } else {
-                    // If the current value is 0, log it
-                    console.log(`data: ${atbStatusValues[i]} (End of sequence)`);
+                for (const dataPoint of json) {
+                    const atb = dataPoint.ATB_Status;
+                    const timestamp = dataPoint.Timestamp;
+                    // console.log(`ATB_Status: ${atb}, ${timestamp}`);
+                    atbStatusValues.push(atb);
+                    TimeStamp.push(timestamp);  
                 }
-            }
+                //Merge tow array abbSatatusValues & Timestampp into one array myArr
+                const myArr = atbStatusValues.map((value: any, index: any) => [value, TimeStamp[index]]);
+                // console.log(myArr);
 
-            console.log(`Total ATB_Status: ${count}`);
-            res.status(200).json({TotalATB_Status: `${count}`})
+                //Count ATB_Status times And Duration
+                let count = 0;
+                const sequenceInfo: any[] = [];
+
+                for (let i = 0; i < myArr.length; i++) {
+                    const currentValue = myArr[i][0];
+                
+                    if (currentValue === 1 && (i === 0 || myArr[i - 1][0] === 0)) {
+                        // Start of a new sequence
+                        count++;
+                        const currentSequenceStartTime: any = new Date(myArr[i][1]);
+                    
+                        // Find the index of the next 0
+                        const endIndex = myArr.findIndex(([value]: any, index: any) => index > i && value === 0);
+                    
+                        // If there is no next 0, consider the sequence until the end
+                        const endIndexOrLastIndex = endIndex !== -1 ? endIndex : myArr.length;
+                    
+                        const currentSequenceEndTime: any = new Date(myArr[endIndexOrLastIndex - 1][1]);
+                    
+                        const durationInMilliseconds = currentSequenceEndTime - currentSequenceStartTime;
+                        const durationInMinutes = durationInMilliseconds / (1000 * 60);
+                    
+                        const sequenceInfoItem = {
+                            sequence: count,
+                            startTime: currentSequenceStartTime,
+                            endTime: currentSequenceEndTime,
+                            duration: durationInMinutes,
+                          };
             
+                          sequenceInfo.push(sequenceInfoItem);
+                        }
+                      }
+            
+                      res.status(200).json({ TotalATB_Status: count, sequenceInfo });
 
             });
-            
+             
         } catch (error) {
             console.log(error)
             res.status(500).json({msg: "Server Error"})
