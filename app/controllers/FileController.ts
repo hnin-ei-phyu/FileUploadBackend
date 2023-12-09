@@ -22,14 +22,14 @@ class FileUpload {
             .then(res => res.text())
             .then(data => {
 
-                const json = csv2json(data, {parseNumbers: true});
+                const oldData = csv2json(data, {parseNumbers: true});
                 // console.log(json);
                 // console.log(json[0].ATB_Status);
 
                 const atbStatusValues: any = [];
                 const TimeStamp: any = [];
 
-                for (const dataPoint of json) {
+                for (const dataPoint of oldData) {
                     const atb = dataPoint.ATB_Status;
                     const timestamp = dataPoint.Timestamp;
                     // console.log(`ATB_Status: ${atb}, ${timestamp}`);
@@ -78,7 +78,7 @@ class FileUpload {
                         }
                       }
             
-                      res.status(200).json({ TotalATB_Status: count,TotalTime: totalTime.toFixed(2) ,sequenceInfo });
+                      res.status(200).json({ TotalATB_Status: count,TotalTime: totalTime.toFixed(2) ,sequenceInfo,oldData });
 
             });
              
